@@ -23,6 +23,7 @@ import TableCellBorderColorCommand from './commands/tablecellbordercolorcommand'
 import TableCellBorderWidthCommand from './commands/tablecellborderwidthcommand';
 import { getNormalizedDefaultProperties } from '../utils/table-properties';
 import { enableProperty } from '../utils/common';
+import TableCellClassesCommand from './commands/tablecellclassescommand';
 
 const VALIGN_VALUES_REG_EXP = /^(top|middle|bottom)$/;
 const ALIGN_VALUES_REG_EXP = /^(left|center|right|justify)$/;
@@ -107,12 +108,20 @@ export default class TableCellPropertiesEditing extends Plugin {
 		} );
 		editor.commands.add( 'tableCellPadding', new TableCellPaddingCommand( editor, defaultTableCellProperties.padding! ) );
 
+		enableCellClassesProperty( schema, conversion );
+		editor.commands.add(
+			'tableCellClasses',
+			new TableCellClassesCommand( editor )
+		);
+
 		editor.data.addStyleProcessorRules( addBackgroundRules );
+
 		enableProperty( schema, conversion, {
 			modelAttribute: 'tableCellBackgroundColor',
 			styleName: 'background-color',
 			defaultValue: defaultTableCellProperties.backgroundColor
 		} );
+
 		editor.commands.add(
 			'tableCellBackgroundColor',
 			new TableCellBackgroundColorCommand( editor, defaultTableCellProperties.backgroundColor )
@@ -278,4 +287,23 @@ function enableVerticalAlignmentProperty( schema: Schema, conversion: Conversion
 				}
 			}
 		} );
+}
+
+function enableCellClassesProperty(
+	schema: Schema,
+	conversion: Conversion
+): void {
+	schema.extend( 'tableCell', {
+		allowAttributes: [ 'tableCellClasses' ]
+	} );
+
+	conversion.for( 'upcast' ).attributeToAttribute( {
+		view: 'class',
+		model: 'tableCellClasses'
+	} );
+
+	conversion.for( 'downcast' ).attributeToAttribute( {
+		model: 'tableCellClasses',
+		view: 'class'
+	} );
 }

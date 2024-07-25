@@ -103,6 +103,14 @@ export default class TableCellPropertiesView extends View {
 	public declare padding: string;
 
 	/**
+	 * The value of the cell classes.
+	 *
+	 * @observable
+	 * @default ''
+	 */
+	public declare classes: string;
+
+	/**
 	 * The value of the cell background color style.
 	 *
 	 * @observable
@@ -188,6 +196,11 @@ export default class TableCellPropertiesView extends View {
 	public readonly paddingInput: LabeledFieldView;
 
 	/**
+	 * An input that allows specifying the table cell CSS classes.
+	 */
+	public readonly classesInput: LabeledFieldView;
+
+	/**
 	 * An input that allows specifying the table cell width.
 	 */
 	public readonly widthInput: LabeledFieldView<FocusableView>;
@@ -244,6 +257,7 @@ export default class TableCellPropertiesView extends View {
 			borderWidth: '',
 			borderColor: '',
 			padding: '',
+			classes: '',
 			backgroundColor: '',
 			width: '',
 			height: '',
@@ -257,6 +271,7 @@ export default class TableCellPropertiesView extends View {
 		const { backgroundRowLabel, backgroundInput } = this._createBackgroundFields();
 		const { widthInput, operatorLabel, heightInput, dimensionsLabel } = this._createDimensionFields();
 		const { horizontalAlignmentToolbar, verticalAlignmentToolbar, alignmentLabel } = this._createAlignmentFields();
+		const { classesRowLabel, classesInput } = this._createClassesFields();
 
 		this.focusTracker = new FocusTracker();
 		this.keystrokes = new KeystrokeHandler();
@@ -266,6 +281,7 @@ export default class TableCellPropertiesView extends View {
 		this.borderColorInput = borderColorInput;
 		this.backgroundInput = backgroundInput;
 		this.paddingInput = this._createPaddingField();
+		this.classesInput = classesInput;
 		this.widthInput = widthInput;
 		this.heightInput = heightInput;
 		this.horizontalAlignmentToolbar = horizontalAlignmentToolbar;
@@ -344,6 +360,16 @@ export default class TableCellPropertiesView extends View {
 			]
 		} ) );
 
+		// CSS classes row.
+		this.children.add( new FormRowView( locale, {
+			labelView: classesRowLabel,
+			children: [
+				classesRowLabel,
+				classesInput
+			],
+			class: 'ck-table-form__classes-row'
+		} ) );
+
 		// Text alignment row.
 		this.children.add( new FormRowView( locale, {
 			labelView: alignmentLabel,
@@ -413,6 +439,7 @@ export default class TableCellPropertiesView extends View {
 			this.widthInput,
 			this.heightInput,
 			this.paddingInput,
+			this.classesInput,
 			this.horizontalAlignmentToolbar,
 			this.verticalAlignmentToolbar,
 			this.saveButtonView,
@@ -707,6 +734,39 @@ export default class TableCellPropertiesView extends View {
 	/**
 	 * Creates the following form fields:
 	 *
+	 * * {@link #classesInput}.
+	 */
+	private _createClassesFields(): {
+		classesRowLabel: LabelView;
+		classesInput: LabeledFieldView;
+		} {
+		const locale = this.locale;
+		const t = this.t!;
+
+		const classesRowLabel = new LabelView( locale );
+		classesRowLabel.text = t( 'CSS classes' );
+
+		const classesInput = new LabeledFieldView( locale, createLabeledInputText );
+
+		classesInput.set( {
+			label: t( 'CSS classes' ),
+			class: 'ck-table-cell-properties-form__classes'
+		} );
+
+		classesInput.fieldView.bind( 'value' ).to( this, 'classes' );
+		classesInput.fieldView.on( 'input', () => {
+			this.classes = classesInput.fieldView.element!.value;
+		} );
+
+		return {
+			classesRowLabel,
+			classesInput
+		};
+	}
+
+	/**
+	 * Creates the following form fields:
+	 *
 	 * * {@link #horizontalAlignmentToolbar},
 	 * * {@link #verticalAlignmentToolbar}.
 	 */
@@ -789,7 +849,8 @@ export default class TableCellPropertiesView extends View {
 			this.borderWidthInput,
 			this.borderColorInput,
 			this.backgroundInput,
-			this.paddingInput
+			this.paddingInput,
+			this.classesInput
 		];
 
 		saveButtonView.set( {
