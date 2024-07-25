@@ -829,7 +829,10 @@ function consumeAttributes( viewElement: ViewElement, conversionApi: UpcastConve
 		viewAttributes.styles = iterableToObject( styles, key => viewElement.getStyle( key ) );
 	}
 
-	if ( classes.size ) {
+	// Don't preserve classes on table cells because our attribute does that.
+	// If we do it here too then we create duplicates.
+	// @todo See if there is a better way to do this.
+	if ( classes.size && ![ 'td', 'th' ].includes( viewElement.name ) ) {
 		viewAttributes.classes = Array.from( classes );
 	}
 

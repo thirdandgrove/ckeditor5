@@ -9,6 +9,10 @@
 			flex-wrap: wrap;
 		}
 
+		&.ck-table-form__classes-row {
+			flex-wrap: wrap;
+		}
+
 		&.ck-table-form__background-row {
 			flex-wrap: wrap;
 		}

@@ -47,6 +47,7 @@ const propertyToCommandMap = {
 	height: 'tableCellHeight',
 	width: 'tableCellWidth',
 	padding: 'tableCellPadding',
+	classes: 'tableCellClasses',
 	backgroundColor: 'tableCellBackgroundColor',
 	horizontalAlignment: 'tableCellHorizontalAlignment',
 	verticalAlignment: 'tableCellVerticalAlignment'
@@ -254,6 +255,13 @@ export default class TableCellPropertiesUI extends Plugin {
 			validator: lengthFieldValidator
 		} ) );
 
+		view.on<ObservableChangeEvent<string>>( 'change:classes', this._getValidatedPropertyChangeCallback( {
+			viewField: view.classesInput,
+			commandName: 'tableCellClasses',
+			errorText: '',
+			validator: () => true
+		} ) );
+
 		view.on<ObservableChangeEvent<string>>( 'change:width', this._getValidatedPropertyChangeCallback( {
 			viewField: view.widthInput,
 			commandName: 'tableCellWidth',
@@ -430,7 +438,7 @@ export default class TableCellPropertiesUI extends Plugin {
 	 */
 	private _getValidatedPropertyChangeCallback(
 		options: {
-			commandName: `tableCell${ 'BorderColor' | 'BorderWidth' | 'Padding' | 'Width' | 'Height' | 'BackgroundColor' }`;
+			commandName: `tableCell${ 'BorderColor' | 'BorderWidth' | 'Padding' | 'Classes' | 'Width' | 'Height' | 'BackgroundColor' }`;
 			viewField: View & { errorText?: string | null };
 			validator: ( arg0: string ) => boolean;
 			errorText: string;
