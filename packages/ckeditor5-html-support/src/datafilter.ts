@@ -851,7 +851,10 @@ function matchAndConsumeAttributes(
 
 		// Verify and consume class names.
 		for ( const className of match.classes || [] ) {
-			if ( consumable.consume( viewElement, { classes: [ className ] } ) ) {
+			// Don't preserve classes on table cells because our attribute does that.
+			// If we do it here too then we create duplicates.
+			// @todo See if there is a better way to do this.
+			if ( consumable.consume( viewElement, { classes: [ className ] } ) && ![ 'td', 'th' ].includes( viewElement.name ) ) {
 				result.classes.push( className );
 			}
 		}
